@@ -1,5 +1,5 @@
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Player } from "../lib/engine";
 import { MELODIES, melodyEvents } from "../lib/songs";
 import ConceptCard from "./ConceptCard";
@@ -11,6 +11,13 @@ export default function MelodyLab() {
   const [activeNote, setActiveNote] = useState(-1);
 
   const song = MELODIES[songIdx];
+
+  // Lowest note of the current song — bubble heights are drawn relative
+  // to this so every song fits, whatever its range.
+  const minMidi = useMemo(
+    () => Math.min(...song.notes.map((nt) => nt.midi)),
+    [song]
+  );
 
   useEffect(() => {
     playerRef.current = new Player();
@@ -25,9 +32,12 @@ export default function MelodyLab() {
     if (playing) {
       playerRef.current.stop();
     } else {
-      playerRef.current.play(melodyEvents(song), {
+      // Pickup notes sit at negative beats — shift everything forward so
+      // they play (they can't be scheduled before time zero).
+      const pickup = Math.max(0, -Math.min(...song.notes.map((nt) => nt.beat)));
+      playerRef.current.play(melodyEvents(song, { offset: pickup }), {
         bpm: song.bpm,
-        beats: song.beats,
+        beats: song.beats + pickup,
         onEvent: (ev) => setActiveNote(ev.id),
         onEnd: () => setActiveNote(-1),
       });
@@ -68,6 +78,13 @@ export default function MelodyLab() {
         <strong>singer carries the melody</strong>, and everything else
         (drums, bass, chords) supports it.
       </p>
+      <p>
+        Melodies move in two ways: <strong>steps</strong> (to the very next
+        note — smooth, like Twinkle Twinkle) and <strong>leaps</strong> (a
+        jump over several notes — dramatic, like the start of Take Me Out to
+        the Ball Game). Most great tunes mix both. Try a few below and see if
+        you can spot the steps and the leaps!
+      </p>
 
       <div className="song-picker">
         {MELODIES.map((s, i) => (
@@ -86,7 +103,7 @@ export default function MelodyLab() {
           <div
             key={note.id}
             className={`note-bubble ${activeNote === note.id ? "note-bubble-active" : ""}`}
-            style={{ "--note-h": `${(note.midi - 58) * 6}px` }}
+            style={{ "--note-h": `${(note.midi - minMidi) * 5}px` }}
           >
             {note.name.replace(/\d/, "")}
           </div>

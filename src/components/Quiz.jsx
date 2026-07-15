@@ -1,7 +1,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Player, noteToMidi } from "../lib/engine";
-import { CHORDS, drumGroove } from "../lib/songs";
+import { CHORDS, drumGroove, RHYTHM_PATTERNS, rhythmPatternEvents } from "../lib/songs";
 
 const n = noteToMidi;
 const SCALE = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
@@ -99,7 +99,78 @@ function howManyQuestion() {
   };
 }
 
-const BUILDERS = [melodyOrChordQuestion, snareQuestion, fasterQuestion, howManyQuestion];
+function happySadQuestion() {
+  const isMajor = Math.random() < 0.5;
+  const root = n(pick(["C4", "D4", "E4", "F4", "G4"]));
+  // Major third = 4 half steps; minor third = 3. That one note is the mood.
+  const triad = [root, root + (isMajor ? 4 : 3), root + 7];
+  const events = [
+    { beat: 0, type: "chord", midis: triad, dur: 2, gain: 0.12 },
+    { beat: 2, type: "chord", midis: triad, dur: 2.5, gain: 0.12 },
+  ];
+  return {
+    prompt: "Listen to this chord 🎧 — does it sound HAPPY or SAD?",
+    options: ["Happy / bright (major)", "Sad / moody (minor)"],
+    answer: isMajor ? 0 : 1,
+    explain: isMajor
+      ? "That was a MAJOR chord — the bright, sunny one."
+      : "That was a MINOR chord — the middle note sits a tiny step lower, and that one note makes it moody.",
+    play: (player, onDone) => player.play(events, { bpm: 90, beats: 5, onEnd: onDone }),
+  };
+}
+
+function steadyOrSyncopatedQuestion() {
+  const steady = Math.random() < 0.5;
+  const pattern = steady
+    ? RHYTHM_PATTERNS.find((p) => p.id === "march")
+    : pick([
+        RHYTHM_PATTERNS.find((p) => p.id === "dancer"),
+        RHYTHM_PATTERNS.find((p) => p.id === "island"),
+      ]);
+  return {
+    prompt:
+      "Feel the low pulse, then listen to the claps 👏 — do they land ON the beats, or sneak in BETWEEN them?",
+    options: ["Right on the beats (steady)", "Between the beats (syncopated)"],
+    answer: steady ? 0 : 1,
+    explain: steady
+      ? "Every clap landed square on a beat — steady as a march."
+      : "Some claps sneaked in between the beats — that's syncopation, the spice that makes music dance.",
+    play: (player, onDone) =>
+      player.play(rhythmPatternEvents(pattern), { bpm: 95, beats: 8, onEnd: onDone }),
+  };
+}
+
+function upOrDownQuestion() {
+  const goingUp = Math.random() < 0.5;
+  const start = Math.floor(Math.random() * (SCALE.length - 5)); // room for 5 steps
+  const run = SCALE.slice(start, start + 5);
+  const notes = goingUp ? run : [...run].reverse();
+  const events = notes.map((name, i) => ({
+    beat: i * 0.75,
+    type: "lead",
+    midi: n(name),
+    dur: 0.7,
+  }));
+  return {
+    prompt: "Listen to the melody 🎧 — is it climbing UP or sliding DOWN?",
+    options: ["Up ⬆️ (higher and higher)", "Down ⬇️ (lower and lower)"],
+    answer: goingUp ? 0 : 1,
+    explain: goingUp
+      ? "Each note was higher than the one before — the melody climbed up like stairs."
+      : "Each note was lower than the one before — the melody walked down the stairs.",
+    play: (player, onDone) => player.play(events, { bpm: 100, beats: 4.5, onEnd: onDone }),
+  };
+}
+
+const BUILDERS = [
+  melodyOrChordQuestion,
+  snareQuestion,
+  fasterQuestion,
+  howManyQuestion,
+  happySadQuestion,
+  steadyOrSyncopatedQuestion,
+  upOrDownQuestion,
+];
 
 export default function Quiz() {
   const playerRef = useRef(null);
@@ -157,8 +228,9 @@ export default function Quiz() {
         <div className="quiz-start">
           <p>
             Random listening questions about everything you just learned:
-            melody vs. chords, finding the snare, comparing tempos. Replay
-            each clip as many times as you like.
+            melody vs. chords, happy vs. sad chords, steady vs. syncopated
+            rhythms, melodies going up or down, finding the snare, comparing
+            tempos. Replay each clip as many times as you like.
           </p>
           <button className="btn btn-primary btn-large" onClick={nextQuestion}>
             Start the quiz

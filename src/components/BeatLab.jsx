@@ -51,8 +51,8 @@ export default function BeatLab() {
       tagline="The steady pulse of a song — like its heartbeat."
       realSongs={[
         {
-          song: "We Will Rock You — Queen",
-          tip: "the stomp-stomp-CLAP is the beat, played with feet and hands",
+          song: "Stayin' Alive — Bee Gees",
+          tip: "such a steady 103 BPM that doctors teach CPR chest compressions to it",
         },
         {
           song: "Billie Jean — Michael Jackson",
@@ -75,6 +75,12 @@ export default function BeatLab() {
         How fast the beat goes is the <strong>tempo</strong>, measured in{" "}
         <strong>BPM</strong> (beats per minute). 60 BPM is one beat every
         second — a slow ballad. 120+ BPM gets people dancing.
+      </p>
+      <p>
+        <strong>Did you know?</strong> Your resting heart beats at roughly
+        60–100 BPM — the same range as most songs. That&apos;s part of why slow
+        songs feel calm (slower than your heart) and fast songs feel exciting
+        (faster than your heart). Music literally plays with your pulse!
       </p>
 
       <div className="beat-dots" aria-hidden="true">

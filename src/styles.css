@@ -752,3 +752,22 @@ button {
 .quiz-explain {
   color: var(--ink-muted);
 }
+
+/* ---------- Harmony lab: chord palette ---------- */
+
+.lab-subhead {
+  margin-top: 20px;
+  font-size: 1.05rem;
+}
+
+.chord-palette .chord-chip {
+  padding: 10px 2px;
+}
+
+.chord-chip-mood {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 600;
+  opacity: 0.7;
+  margin-top: 2px;
+}

@@ -13,9 +13,26 @@ export const CHORDS = {
   F: [n("F3"), n("A3"), n("C4")],
   G: [n("G3"), n("B3"), n("D4")],
   Am: [n("A3"), n("C4"), n("E4")],
+  Dm: [n("D4"), n("F4"), n("A4")],
+  Em: [n("E4"), n("G4"), n("B4")],
+  // A "7" chord adds a fourth note that makes it lean toward home (C).
+  G7: [n("G3"), n("B3"), n("D4"), n("F4")],
+  // C minor: same as C but the middle note drops a half step — instant mood flip.
+  Cm: [n("C4"), n("Eb4"), n("G4")],
 };
 
-const BASS_ROOTS = { C: n("C2"), G: n("G2"), Am: n("A2"), F: n("F2") };
+// Every chord name used in a song's chord list MUST have a root here too —
+// backingEvents derives its bass line from this map.
+const BASS_ROOTS = {
+  C: n("C2"),
+  G: n("G2"),
+  Am: n("A2"),
+  F: n("F2"),
+  Dm: n("D2"),
+  Em: n("E2"),
+  G7: n("G2"),
+  Cm: n("C2"),
+};
 
 /* ---------- Song format ----------
 
@@ -205,6 +222,97 @@ export const BALL_GAME = song(
   ]
 );
 
+export const MARY_LAMB = song(
+  {
+    title: "Mary Had a Little Lamb",
+    emoji: "🐑",
+    fact: "The first words ever recorded — Thomas Edison recited it into his brand-new phonograph in 1877.",
+    bpm: 104,
+    beatsPerBar: 4,
+    beats: 32,
+  },
+  [
+    // "Ma-ry had a lit-tle lamb"
+    ["E4", 0, 1], ["D4", 1, 1], ["C4", 2, 1], ["D4", 3, 1],
+    ["E4", 4, 1], ["E4", 5, 1], ["E4", 6, 2],
+    // "lit-tle lamb, lit-tle lamb"
+    ["D4", 8, 1], ["D4", 9, 1], ["D4", 10, 2],
+    ["E4", 12, 1], ["G4", 13, 1], ["G4", 14, 2],
+    // "Ma-ry had a lit-tle lamb whose"
+    ["E4", 16, 1], ["D4", 17, 1], ["C4", 18, 1], ["D4", 19, 1],
+    ["E4", 20, 1], ["E4", 21, 1], ["E4", 22, 1], ["E4", 23, 1],
+    // "fleece was white as snow"
+    ["D4", 24, 1], ["D4", 25, 1], ["E4", 26, 1], ["D4", 27, 1],
+    ["C4", 28, 4],
+  ],
+  [
+    ["C", 0, 4], ["C", 4, 4], ["G", 8, 4], ["C", 12, 4],
+    ["C", 16, 4], ["C", 20, 4], ["G", 24, 4], ["C", 28, 4],
+  ]
+);
+
+export const LONDON_BRIDGE = song(
+  {
+    title: "London Bridge Is Falling Down",
+    emoji: "🌉",
+    fact: "This singing game is centuries old — versions of it are sung all across Europe in different languages.",
+    bpm: 112,
+    beatsPerBar: 4,
+    beats: 32,
+  },
+  [
+    // "Lon-don Bridge is fall-ing down"
+    ["G4", 0, 1.5], ["A4", 1.5, 0.5], ["G4", 2, 1], ["F4", 3, 1],
+    ["E4", 4, 1], ["F4", 5, 1], ["G4", 6, 2],
+    // "fall-ing down, fall-ing down"
+    ["D4", 8, 1], ["E4", 9, 1], ["F4", 10, 2],
+    ["E4", 12, 1], ["F4", 13, 1], ["G4", 14, 2],
+    // "Lon-don Bridge is fall-ing down"
+    ["G4", 16, 1.5], ["A4", 17.5, 0.5], ["G4", 18, 1], ["F4", 19, 1],
+    ["E4", 20, 1], ["F4", 21, 1], ["G4", 22, 2],
+    // "my fair la-dy"
+    ["D4", 24, 2], ["G4", 26, 2],
+    ["E4", 28, 1], ["C4", 29, 3],
+  ],
+  [
+    ["C", 0, 4], ["C", 4, 4], ["G7", 8, 4], ["C", 12, 4],
+    ["C", 16, 4], ["C", 20, 4], ["G7", 24, 4], ["C", 28, 4],
+  ]
+);
+
+export const FRERE_JACQUES = song(
+  {
+    title: "Frère Jacques",
+    emoji: "🛎️",
+    fact: "A French round about a monk oversleeping — groups sing it in overlapping layers called a canon.",
+    bpm: 108,
+    beatsPerBar: 4,
+    beats: 32,
+  },
+  [
+    // "Frè-re Jac-ques" ×2
+    ["C4", 0, 1], ["D4", 1, 1], ["E4", 2, 1], ["C4", 3, 1],
+    ["C4", 4, 1], ["D4", 5, 1], ["E4", 6, 1], ["C4", 7, 1],
+    // "dor-mez vous?" ×2
+    ["E4", 8, 1], ["F4", 9, 1], ["G4", 10, 2],
+    ["E4", 12, 1], ["F4", 13, 1], ["G4", 14, 2],
+    // "son-nez les ma-ti-nes" ×2 (the quick "morning bells")
+    ["G4", 16, 0.5], ["A4", 16.5, 0.5], ["G4", 17, 0.5], ["F4", 17.5, 0.5],
+    ["E4", 18, 1], ["C4", 19, 1],
+    ["G4", 20, 0.5], ["A4", 20.5, 0.5], ["G4", 21, 0.5], ["F4", 21.5, 0.5],
+    ["E4", 22, 1], ["C4", 23, 1],
+    // "ding, dang, dong" ×2 (dips below the home note!)
+    ["C4", 24, 1], ["G3", 25, 1], ["C4", 26, 2],
+    ["C4", 28, 1], ["G3", 29, 1], ["C4", 30, 2],
+  ],
+  [
+    ["C", 0, 4], ["C", 4, 4], ["C", 8, 4], ["C", 12, 4],
+    ["C", 16, 4], ["C", 20, 4],
+    ["C", 24, 1], ["G7", 25, 1], ["C", 26, 2],
+    ["C", 28, 1], ["G7", 29, 1], ["C", 30, 2],
+  ]
+);
+
 export const SONG_LIBRARY = [
   HAPPY_BIRTHDAY,
   JINGLE_BELLS,
@@ -212,9 +320,23 @@ export const SONG_LIBRARY = [
   BALL_GAME,
   TWINKLE,
   ODE_TO_JOY,
+  MARY_LAMB,
+  LONDON_BRIDGE,
+  FRERE_JACQUES,
 ];
 
-export const MELODIES = [TWINKLE, ODE_TO_JOY];
+// Simplest tunes first — MelodyLab walks through these.
+export const MELODIES = [
+  TWINKLE,
+  MARY_LAMB,
+  FRERE_JACQUES,
+  LONDON_BRIDGE,
+  ODE_TO_JOY,
+  JINGLE_BELLS,
+  HAPPY_BIRTHDAY,
+  SAINTS,
+  BALL_GAME,
+];
 
 /* ---------- Event builders ---------- */
 
@@ -334,6 +456,69 @@ export function pulseEvents(bars = 1, { track = "pulse" } = {}) {
       });
       if (b === 0) events.push({ beat: bar * 4, type: "hat", gain: 0.15, track });
     }
+  }
+  return events;
+}
+
+/* ---------- Rhythm patterns (Rhythm lab / Quiz) ----------
+
+Each pattern is a set of clap/snare hits over a 2-bar (8-beat) loop,
+played on top of the steady kick pulse. Fraction beats (1.5, 2/3…)
+land BETWEEN the beats — that's syncopation and swing.
+*/
+
+export const RHYTHM_PATTERNS = [
+  {
+    id: "march",
+    label: "🥾 The March",
+    desc: "a clap on every beat — the rhythm walks in step with the pulse",
+    hits: [0, 1, 2, 3, 4, 5, 6, 7],
+    bpm: 100,
+  },
+  {
+    id: "rock",
+    label: "🥁 The Rock Beat",
+    desc: "claps on 2 and 4 only — the “backbeat” behind most pop and rock songs",
+    hits: [1, 3, 5, 7],
+    bpm: 96,
+  },
+  {
+    id: "dancer",
+    label: "✨ The Dancer",
+    desc: "long-short-short — some claps sneak in between the beats (syncopation!)",
+    hits: [0, 1.5, 2, 3, 3.5, 4, 5.5, 6, 7, 7.5],
+    bpm: 95,
+  },
+  {
+    id: "island",
+    label: "🏝️ The Island Bounce",
+    desc: "claps only on the in-between “ands” — the springy offbeat of reggae",
+    hits: [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5],
+    bpm: 92,
+  },
+  {
+    id: "shuffle",
+    label: "🐎 The Shuffle",
+    desc: "every beat splits long-short, like a horse's easy trot — that's “swing”",
+    hits: [0, 2 / 3, 1, 1 + 2 / 3, 2, 2 + 2 / 3, 3, 3 + 2 / 3,
+           4, 4 + 2 / 3, 5, 5 + 2 / 3, 6, 6 + 2 / 3, 7, 7 + 2 / 3],
+    bpm: 84,
+  },
+  {
+    id: "clave",
+    label: "🗝️ The Secret Key",
+    desc: "the famous 3–2 “clave” — a 2-bar pattern that unlocks Latin music",
+    hits: [0, 1.5, 3, 5, 6],
+    bpm: 100,
+  },
+];
+
+// Steady kick pulse (track "pulse") + the pattern's claps (track "rhythm"),
+// so the rhythm layer can be muted live while the pulse keeps going.
+export function rhythmPatternEvents(pattern) {
+  const events = pulseEvents(2, { track: "pulse" });
+  for (const b of pattern.hits) {
+    events.push({ beat: b, type: "snare", gain: 0.3, track: "rhythm" });
   }
   return events;
 }

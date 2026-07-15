@@ -1,29 +1,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Player } from "../lib/engine";
+import { RHYTHM_PATTERNS, rhythmPatternEvents } from "../lib/songs";
 import ConceptCard from "./ConceptCard";
 
-// Steady kick pulse + a syncopated clap/snare rhythm layered on top.
-function rhythmEvents() {
-  const events = [];
-  for (let bar = 0; bar < 2; bar++) {
-    const base = bar * 4;
-    for (let b = 0; b < 4; b++) {
-      events.push({ beat: base + b, type: "kick", gain: b === 0 ? 0.65 : 0.45, track: "pulse" });
-    }
-    // The rhythm pattern: long-short-short-long over the steady pulse.
-    [0, 1.5, 2, 3, 3.5].forEach((b) => {
-      events.push({ beat: base + b, type: "snare", gain: 0.3, track: "rhythm" });
-    });
-  }
-  return events;
-}
+const DEFAULT_PATTERN = RHYTHM_PATTERNS.findIndex((p) => p.id === "dancer");
 
 export default function RhythmLab() {
   const playerRef = useRef(null);
+  const [patternIdx, setPatternIdx] = useState(DEFAULT_PATTERN);
   const [playing, setPlaying] = useState(false);
   const [rhythmOn, setRhythmOn] = useState(false);
   const [currentBeat, setCurrentBeat] = useState(-1);
+
+  const pattern = RHYTHM_PATTERNS[patternIdx];
 
   useEffect(() => {
     playerRef.current = new Player();
@@ -39,8 +29,8 @@ export default function RhythmLab() {
       playerRef.current.stop();
     } else {
       playerRef.current.setTrackOn("rhythm", rhythmOn);
-      playerRef.current.play(rhythmEvents(), {
-        bpm: 95,
+      playerRef.current.play(rhythmPatternEvents(pattern), {
+        bpm: pattern.bpm,
         loop: true,
         beats: 8,
         onBeat: (b) => setCurrentBeat(b % 4),
@@ -55,6 +45,11 @@ export default function RhythmLab() {
     playerRef.current.setTrackOn("rhythm", next);
   };
 
+  const pickPattern = (idx) => {
+    playerRef.current.stop();
+    setPatternIdx(idx);
+  };
+
   return (
     <ConceptCard
       emoji="👏"
@@ -62,8 +57,16 @@ export default function RhythmLab() {
       tagline="The pattern of long and short sounds played on top of the beat."
       realSongs={[
         {
+          song: "We Will Rock You — Queen",
+          tip: "stomp-stomp-CLAP: one of the most famous rhythm patterns ever",
+        },
+        {
           song: "Shape of You — Ed Sheeran",
           tip: "the beat is steady, but the vocal rhythm dances around it",
+        },
+        {
+          song: "Three Little Birds — Bob Marley",
+          tip: "the guitar chops on the offbeats — that's the Island Bounce",
         },
         {
           song: "Happy — Pharrell Williams",
@@ -78,6 +81,26 @@ export default function RhythmLab() {
         played <em>on top of</em> that pulse. Clapping along to the words of a
         song? That&apos;s rhythm. Tapping your foot? That&apos;s the beat.
       </p>
+      <p>
+        Rhythm patterns have personalities — and names! When claps land right
+        on the beats, the rhythm feels solid and marching. When they sneak in{" "}
+        <em>between</em> the beats, that&apos;s called{" "}
+        <strong>syncopation</strong> — it&apos;s what makes music feel funky,
+        jazzy, or danceable. Try each pattern below:
+      </p>
+
+      <div className="song-picker">
+        {RHYTHM_PATTERNS.map((p, i) => (
+          <button
+            key={p.id}
+            className={`pill-tab ${i === patternIdx ? "active" : ""}`}
+            onClick={() => pickPattern(i)}
+          >
+            {p.label}
+          </button>
+        ))}
+      </div>
+      <p className="demo-hint">{pattern.desc}</p>
 
       <div className="beat-dots" aria-hidden="true">
         {[0, 1, 2, 3].map((b) => (
@@ -100,12 +123,13 @@ export default function RhythmLab() {
           className={`btn ${rhythmOn ? "btn-secondary" : "btn-ghost"}`}
           onClick={toggleRhythm}
         >
-          {rhythmOn ? "👏 Rhythm: ON" : "👏 Add a rhythm on top"}
+          {rhythmOn ? "👏 Rhythm: ON" : "👏 Add the rhythm on top"}
         </button>
       </div>
       <p className="demo-hint">
-        Start the beat, then flip the rhythm on and off while it plays. Notice
-        the low pulse never changes — only the clap pattern comes and goes.
+        Start the beat, then flip the rhythm on and off while it plays. The
+        low pulse never changes — only the clap pattern comes and goes. Then
+        switch patterns and hear how each one has its own feel.
       </p>
     </ConceptCard>
   );
